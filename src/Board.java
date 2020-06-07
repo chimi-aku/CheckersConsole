@@ -112,7 +112,7 @@ public class Board {
             }*/
     }
 
-    /*public List<Field> valid_moves(Piece piece){
+    public List<Field> valid_moves(Piece piece){
 
         int row = piece.get_row();
         int col = piece.get_col();
@@ -122,22 +122,21 @@ public class Board {
         List<Field> valid_moves_list = new LinkedList<Field>();
 
         if(is_king == false){
-            if(color.equals("white")){
+            if(color.equals("blue")){
 
-                if( (row + 1 <= 7) && (col + 1 <= 7) && !(fields[row + 1][col + 1].get_is_taken()) )
-                    valid_moves_list.add(fields[row + 1][col + 1]);
+                if((row - 1 >= 1) && (col + 1 <= 8) && !(fields[row - 1][col + 1].get_is_taken()))
+                    valid_moves_list.add(fields[row - 1][col + 1]);
 
-                if( (row + 1 <= 7) && (col - 1 >= 0) && !(fields[row + 1][col - 1].get_is_taken()) )
-                    valid_moves_list.add(fields[row + 1][col - 1]);
+                if((row - 1 >= 1) && (col - 1 >= 1) && !(fields[row - 1][col - 1].get_is_taken()))
+                    valid_moves_list.add(fields[row - 1][col - 1]);
             }
             else {
 
-                if( (row - 1 >= 0) && (col + 1 <= 7) && !(fields[row - 1][col + 1].get_is_taken()) )
-                    valid_moves_list.add(fields[row - 1][col + 1]);
+                if((row + 1 <= 8) && (col + 1 <= 8) && !(fields[row + 1][col + 1].get_is_taken()))
+                    valid_moves_list.add(fields[row + 1][col + 1]);
 
-                if( (row - 1 >= 0) && (col - 1 >= 0) && !(fields[row - 1][col - 1].get_is_taken()) )
-                    valid_moves_list.add(fields[row - 1][col - 1]);
-
+                if( (row + 1 <= 8) && (col - 1 >= 1) && !(fields[row + 1][col - 1].get_is_taken()) )
+                    valid_moves_list.add(fields[row + 1][col - 1]);
             }
         }
 
@@ -145,33 +144,42 @@ public class Board {
             System.out.print("No valid moves");
         }
         else{
-            for(int i=0; i<valid_moves_list.size(); i++){
+            for(int i = 0; i < valid_moves_list.size(); i++){
                 System.out.println("Valid move in row: " + valid_moves_list.get(i).get_row() + " and col: " + valid_moves_list.get(i).get_col());
             }
         }
 
         return valid_moves_list;
-    }*/
+    }
 
-    public void move_piece(Piece piece) {
+    public void move_piece() {
 
-        if (fields[piece.get_row()][piece.get_col()].get_is_taken()) { // Wywala błąd tablicy fields przy używaniu pustego pola
+        Piece piece = select_piece();
+        List<Field> valid_moves = valid_moves(piece);
+
+
+        //if (fields[piece.get_row()][piece.get_col()].get_is_taken()) { // Wywala błąd tablicy fields przy używaniu pustego pola
 
             //List<Field> valid_moves = valid_moves(piece);
             //List<Integer> new_position = select_position(1, 2);
 
             //while (select_position().get(0) != valid_moves)
 
-        } else {
-            System.out.print("Piece doesn't exist on this field");
-            return;
-        }
+        //} else {
+            //System.out.print("Piece doesn't exist on this field");
+            //return;
+        //}
 
 
     }
 
-    public Piece select_piece() { // tymczasowe argumenrty, tu będziemy przekazywać kliknięcie
+    public Field select_new_field(){
 
+    }
+
+    public Piece select_piece() {
+
+        String who = whose_move();
         List<Integer> position_of_piece = new LinkedList<Integer>();
         Scanner scan = new Scanner(System.in);
         String cords = " ";
@@ -184,15 +192,42 @@ public class Board {
 
             Pattern pattern = Pattern.compile("([A-H]|[a-h])[1-8]");
 
-            valid = !(pattern.matcher(cords).matches());
+            position_of_piece = convertCords(cords);
+
+            if(pattern.matcher(cords).matches()){
+                if(who.equals("blue")) {
+                    for (int i = 0; i < blue_pieces_list.size(); i++) {
+                        if (blue_pieces_list.get(i).get_row() == position_of_piece.get(0) && blue_pieces_list.get(i).get_col() == position_of_piece.get(1)){
+                            valid = false;
+                            break;
+                        } else if(fields[position_of_piece.get(0)][position_of_piece.get(1)].get_is_taken()) {
+                            System.out.println("You have choosen piece of your opponent!");
+                            break;
+                        } else {
+                            System.out.println("There is no piece on this field!");
+                            break;
+                        }
+                    }
+                } else if(who.equals("red")){
+                    for(int i = 0; i < red_pieces_list.size(); i++){
+                        if(red_pieces_list.get(i).get_row() == position_of_piece.get(0) && red_pieces_list.get(i).get_col() == position_of_piece.get(1)){
+                            valid = false;
+                            break;
+                        } else if(fields[position_of_piece.get(0)][position_of_piece.get(1)].get_is_taken()) {
+                            System.out.println("You have choosen piece of your opponent!");
+                            break;
+                        } else {
+                            System.out.println("There is no piece on this field!");
+                            break;
+                        }
+                    }
+                }
+            }
         }
 
         System.out.println("Your cords are: " + cords.charAt(0) + ", " + cords.charAt(1));
 
-        position_of_piece = convertCords(cords);
         System.out.println("Your cords are: " + position_of_piece.get(0) + ", " + position_of_piece.get(1));
-
-        String who = whose_move();
 
         if(who.equals("blue")){
             for(int i = 0; i < blue_pieces_list.size(); i++){
@@ -209,10 +244,6 @@ public class Board {
                 }
             }
         }
-
-        //new_position.add(row);
-        //new_position.add(col);
-        // row on index 0, col on index 1
 
         return new Piece("transparent", -1, -1);
     }
