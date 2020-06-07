@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 
 public class Board {
     int turn;
+    String move_or_attack;
     private int red_units;
     private int blue_units;
     String[][] board;
@@ -23,6 +24,7 @@ public class Board {
 
 
     Board() {
+        move_or_attack = "move";
         turn = 1;
         board = new String[9][9];
         fields = new Field[9][9];
@@ -152,11 +154,9 @@ public class Board {
         return valid_moves_list;
     }
 
-    public void move_piece() {
+    /*public void move_piece() {
 
-        Piece piece = select_piece();
-        List<Field> valid_moves = valid_moves(piece);
-
+        check_move();
 
         //if (fields[piece.get_row()][piece.get_col()].get_is_taken()) { // Wywala błąd tablicy fields przy używaniu pustego pola
 
@@ -170,11 +170,49 @@ public class Board {
             //return;
         //}
 
+    }*/
 
+    public void move_piece(){
+        Piece piece = select_piece();
+        List<Field> valid_moves = valid_moves(piece);
+        //List<Field> valid_attacks = valid_attacks(piece);
+        Field choosed = select_field(valid_moves);
+
+        if(move_or_attack.equals("move")) execute_move(piece, choosed);
+        //else execute_attack(piece, choosed);
     }
 
-    public Field select_new_field(){
+    public void execute_move(Piece piece, Field choose){
+        fields[piece.get_row()][piece.get_col()].set_is_taken(false);
+        piece.set_row(choose.get_row());
+        piece.set_col(choose.get_col());
+        choose.set_is_taken(true);
+    }
 
+    public Field select_field(List<Field> valid_moves){
+        Scanner scan = new Scanner(System.in);
+        String cords = " ";
+        boolean valid = true;
+
+        while(valid){
+            System.out.println("Choose the field where you want to move: (for example: A4, a4)");
+            List<Integer> position_of_field = new LinkedList<Integer>();
+            cords = scan.nextLine();
+
+            Pattern pattern = Pattern.compile("([A-H]|[a-h])[1-8]");
+
+            position_of_field = convertCords(cords);
+
+            if(pattern.matcher(cords).matches()){
+                for(int i = 0; i < valid_moves.size(); i++){
+                    if(valid_moves.get(i).get_row() == position_of_field.get(0) && valid_moves.get(i).get_col() == position_of_field.get(1)){
+                        move_or_attack("move");
+                        return valid_moves.get(i);
+                    }
+                }
+            }
+        }
+        return new Field(-1, -1, false);
     }
 
     public Piece select_piece() {
@@ -267,6 +305,12 @@ public class Board {
         turn++;
 
         return who;
+    }
+
+    public void move_or_attack(String choose){
+
+        if(choose.equals("move")) move_or_attack = "move";
+        else move_or_attack = "attack";
     }
 
     public List<Integer> convertCords(String cords){

@@ -4,5 +4,8 @@ public class Main {
         board.setup_board();
         board.display_board();
         board.move_piece();
+        board.display_board();
+        board.move_piece();
+        board.display_board();
     }
 }
