@@ -104,6 +104,12 @@ public class Board {
                     //System.out.print("pole Row: "+ fields[row][col].get_row() + " Col: " + fields[row][col].get_col() + " taken: " + fields[row][col].get_is_taken() + " \n");
                 }
             }
+
+            /*for(int i = 0; i < blue_pieces_list.size(); i++){
+                System.out.println("Piece: row: " + blue_pieces_list.get(i).get_row() + ", col: " + blue_pieces_list.get(i).get_col() + ", color: " + blue_pieces_list.get(i).get_color());
+
+                System.out.println("Piece: row: " + red_pieces_list.get(i).get_row() + ", col: " + red_pieces_list.get(i).get_col() + ", color: " + red_pieces_list.get(i).get_color());
+            }*/
     }
 
     /*public List<Field> valid_moves(Piece piece){
@@ -186,16 +192,18 @@ public class Board {
         position_of_piece = convertCords(cords);
         System.out.println("Your cords are: " + position_of_piece.get(0) + ", " + position_of_piece.get(1));
 
-        if(whose_move().equals("blue")){
+        String who = whose_move();
+
+        if(who.equals("blue")){
             for(int i = 0; i < blue_pieces_list.size(); i++){
-                if(blue_pieces_list.get(i).get_row() == position_of_piece.get(0) && blue_pieces_list.get(i).get_row() == position_of_piece.get(1)){
+                if(blue_pieces_list.get(i).get_row() == position_of_piece.get(0) && blue_pieces_list.get(i).get_col() == position_of_piece.get(1)){
                     System.out.println("Piece: row: " + blue_pieces_list.get(i).get_row() + ", col: " + blue_pieces_list.get(i).get_col() + ", color: " + blue_pieces_list.get(i).get_color());
                     return blue_pieces_list.get(i);
                 }
             }
-        } else if(whose_move().equals("red")){
+        } else if(who.equals("red")){
             for(int i = 0; i < red_pieces_list.size(); i++){
-                if(red_pieces_list.get(i).get_row() == position_of_piece.get(0) && red_pieces_list.get(i).get_row() == position_of_piece.get(1)){
+                if(red_pieces_list.get(i).get_row() == position_of_piece.get(0) && red_pieces_list.get(i).get_col() == position_of_piece.get(1)){
                     System.out.println("Piece: row: " + red_pieces_list.get(i).get_row() + ", col: " + red_pieces_list.get(i).get_col() + ", color: " + red_pieces_list.get(i).get_color());
                     return red_pieces_list.get(i);
                 }
