@@ -3,7 +3,6 @@ public class Main {
         Board board = new Board();
         board.setup_board();
         board.display_board();
-
         board.select_piece();
     }
 }

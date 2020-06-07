@@ -7,6 +7,7 @@ import java.lang.String;
 import java.util.regex.Pattern;
 
 public class Board {
+    int turn;
     private int red_units;
     private int blue_units;
     String[][] board;
@@ -22,6 +23,7 @@ public class Board {
 
 
     Board() {
+        turn = 1;
         board = new String[9][9];
         fields = new Field[9][9];
         //this.white_units = 12;
@@ -162,7 +164,7 @@ public class Board {
 
     }
 
-    public List<Integer> select_piece() { // tymczasowe argumenrty, tu będziemy przekazywać kliknięcie
+    public Piece select_piece() { // tymczasowe argumenrty, tu będziemy przekazywać kliknięcie
 
         List<Integer> position_of_piece = new LinkedList<Integer>();
         Scanner scan = new Scanner(System.in);
@@ -171,7 +173,7 @@ public class Board {
 
         while(valid){
 
-            System.out.println("Type cords (for example: A4, a4)");
+            System.out.println("Type cords of piece which you want to move (for example: A4, a4)");
             cords = scan.nextLine();
 
             Pattern pattern = Pattern.compile("([A-H]|[a-h])[1-8]");
@@ -184,13 +186,27 @@ public class Board {
         position_of_piece = convertCords(cords);
         System.out.println("Your cords are: " + position_of_piece.get(0) + ", " + position_of_piece.get(1));
 
-
+        if(whose_move().equals("blue")){
+            for(int i = 0; i < blue_pieces_list.size(); i++){
+                if(blue_pieces_list.get(i).get_row() == position_of_piece.get(0) && blue_pieces_list.get(i).get_row() == position_of_piece.get(1)){
+                    System.out.println("Piece: row: " + blue_pieces_list.get(i).get_row() + ", col: " + blue_pieces_list.get(i).get_col() + ", color: " + blue_pieces_list.get(i).get_color());
+                    return blue_pieces_list.get(i);
+                }
+            }
+        } else if(whose_move().equals("red")){
+            for(int i = 0; i < red_pieces_list.size(); i++){
+                if(red_pieces_list.get(i).get_row() == position_of_piece.get(0) && red_pieces_list.get(i).get_row() == position_of_piece.get(1)){
+                    System.out.println("Piece: row: " + red_pieces_list.get(i).get_row() + ", col: " + red_pieces_list.get(i).get_col() + ", color: " + red_pieces_list.get(i).get_color());
+                    return red_pieces_list.get(i);
+                }
+            }
+        }
 
         //new_position.add(row);
         //new_position.add(col);
         // row on index 0, col on index 1
 
-        return position_of_piece;
+        return new Piece("transparent", -1, -1);
     }
 
     /*public Piece get_piece(int row, int col, List<Integer> integers){
@@ -202,6 +218,17 @@ public class Board {
 
         return new Piece("wrong_cords", -1, -1);
     } */
+
+    public String whose_move(){
+        String who;
+
+        if(turn % 2 != 0) who = "blue";
+        else who = "red";
+
+        turn++;
+
+        return who;
+    }
 
     public List<Integer> convertCords(String cords){
 
