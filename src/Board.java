@@ -365,8 +365,8 @@ public class Board {
                         move_or_attack("attack");
                         return valid_attacks.get(i);
                     }
-                    }
                 }
+
 
                 for(int i = 0; i < valid_moves.size(); i++){
                     if(valid_moves.get(i).get_row() == position_of_field.get(0) && valid_moves.get(i).get_col() == position_of_field.get(1)){
@@ -374,6 +374,7 @@ public class Board {
                         return valid_moves.get(i);
                     } else {
                         System.out.println("This move can't be execute, choose another field!\n");
+                    }
                 }
             }
         }
