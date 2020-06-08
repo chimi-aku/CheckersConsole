@@ -1,5 +1,3 @@
-import com.sun.source.tree.CompilationUnitTree;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
@@ -22,8 +20,8 @@ public class Board {
     //How to use colors example
     //System.out.println(ConsoleColors.BLUE + "RED COLORED" + ConsoleColors.RED + " NORMAL");
 
-    // valid_moves_method
-
+    public List<Piece> get_red_pieces_list(){ return red_pieces_list; }
+    public List<Piece> get_blue_pieces_list(){ return red_pieces_list; }
 
     Board() {
         who = "blue";
@@ -370,7 +368,7 @@ public class Board {
         boolean valid = true;
 
         while(valid){
-            System.out.println("Choose the field where you want to move: (for example: A4, a4)");
+            System.out.println("Choose correct field where you want to move: (for example: A4, a4)");
             List<Integer> position_of_field = new LinkedList<Integer>();
             cords = scan.nextLine();
 
@@ -387,13 +385,12 @@ public class Board {
                     }
                 }
 
-
                 for(int i = 0; i < valid_moves.size(); i++){
                     if(valid_moves.get(i).get_row() == position_of_field.get(0) && valid_moves.get(i).get_col() == position_of_field.get(1)){
                         move_or_attack("move");
                         return valid_moves.get(i);
                     } else {
-                        System.out.println(ConsoleColors.RED + "This move can't be execute, choose another field!\n" + ConsoleColors.RESET);
+                        //System.out.println(ConsoleColors.RED + "This move can't be execute, choose another field!\n" + ConsoleColors.RESET);
                     }
                 }
             }
