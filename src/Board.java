@@ -26,6 +26,7 @@ public class Board {
 
 
     Board() {
+        who = "blue";
         move_or_attack = "move";
         turn = 1;
         board = new String[9][9];
@@ -54,6 +55,9 @@ public class Board {
         board[6][0] = "F ";
         board[7][0] = "G ";
         board[8][0] = "H ";
+
+        System.out.println("\nBlue units left: " + blue_units);
+        System.out.println("Red units left: " + red_units + "\n");
 
         for (int row = 1; row < 9; row++) {
             for (int col = 1; col < 9; col++) {
@@ -230,14 +234,24 @@ public class Board {
     }
 
     public void move_piece(){
-        Piece piece = select_piece();
-        List<Field> valid_moves = valid_moves(piece);
-        List<Field> valid_attacks = valid_attacks(piece);
+        Piece piece;
+        List<Field> valid_moves;
+        List<Field> valid_attacks;
+
+        do {
+
+            piece = select_piece();
+            valid_moves = valid_moves(piece);
+            valid_attacks = valid_attacks(piece);
+
+        } while(valid_moves.size() == 0 && valid_attacks.size() == 0);
 
         Field choosed = select_field(valid_moves, valid_attacks);
 
         if(move_or_attack.equals("move")) execute_move(piece, choosed);
         else if(move_or_attack.equals("attack")) execute_attack(piece, choosed);
+
+        change_turn();
     }
 
     public void execute_move(Piece piece, Field choose){
@@ -255,7 +269,6 @@ public class Board {
                 if(red_pieces_list.get(i).get_row() == coordinates_to_remove.get(0) && red_pieces_list.get(i).get_col() == coordinates_to_remove.get(1)){
                     red_pieces_list.remove(i);
                     red_units--;
-                    System.out.println("Red units left: " + red_units);
                 }
             }
         } else if(who == "red"){
@@ -263,7 +276,6 @@ public class Board {
                 if(blue_pieces_list.get(i).get_row() == coordinates_to_remove.get(0) && blue_pieces_list.get(i).get_col() == coordinates_to_remove.get(1)){
                     blue_pieces_list.remove(i);
                     blue_units--;
-                    System.out.println("Blue units left: " + blue_units);
                 }
             }
         }
@@ -289,20 +301,21 @@ public class Board {
             position_of_field = convertCords(cords);
 
             if(pattern.matcher(cords).matches()){
-                for(int i = 0; i < valid_moves.size(); i++){
-                    if(valid_moves.get(i).get_row() == position_of_field.get(0) && valid_moves.get(i).get_col() == position_of_field.get(1)){
-                        move_or_attack("move");
-                        return valid_moves.get(i);
-                    }
-                }
 
                 for(int i = 0; i < valid_attacks.size(); i++){
                     if(valid_attacks.get(i).get_row() == position_of_field.get(0) && valid_attacks.get(i).get_col() == position_of_field.get(1)){
                         move_or_attack("attack");
                         return valid_attacks.get(i);
+                    }
+                    }
+                }
+
+                for(int i = 0; i < valid_moves.size(); i++){
+                    if(valid_moves.get(i).get_row() == position_of_field.get(0) && valid_moves.get(i).get_col() == position_of_field.get(1)){
+                        move_or_attack("move");
+                        return valid_moves.get(i);
                     } else {
                         System.out.println("This move can't be execute, choose another field!\n");
-                    }
                 }
             }
         }
@@ -310,7 +323,6 @@ public class Board {
     }
 
     public Piece select_piece() {
-
         String who = whose_move();
         List<Integer> position_of_piece = new LinkedList<Integer>();
         Scanner scan = new Scanner(System.in);
@@ -397,10 +409,10 @@ public class Board {
 
         System.out.println("\nNow is " + who + " turn!\n");
 
-        turn++;
-
         return who;
     }
+
+    public void change_turn(){ turn++; }
 
     public void move_or_attack(String choose){
 
