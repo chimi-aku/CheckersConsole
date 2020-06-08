@@ -9,7 +9,7 @@ public class Piece {
         this.row = row;
         this.col = col;
 
-        this.is_king = false;
+        this.is_king = true;
     }
 
 
@@ -38,6 +38,8 @@ public class Piece {
     public void set_col(int col) {
         this.col = col;
     }
+
+    public void set_is_king(boolean is_king){ this.is_king = is_king; }
 
     public void set_color(String color) {
         this.color = color;
