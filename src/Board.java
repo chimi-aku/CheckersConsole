@@ -122,6 +122,28 @@ public class Board {
             }*/
     }
 
+    public void move_piece(){
+        Piece piece;
+        List<Field> valid_moves;
+        List<Field> valid_attacks;
+
+        do {
+
+            piece = select_piece();
+            valid_moves = valid_moves(piece);
+            valid_attacks = valid_attacks(piece);
+
+        } while(valid_moves.size() == 0 && valid_attacks.size() == 0);
+
+        Field choosed = select_field(valid_moves, valid_attacks);
+
+        if(move_or_attack.equals("move")) execute_move(piece, choosed);
+        else if(move_or_attack.equals("attack")) execute_attack(piece, choosed);
+
+        transform_to_king(piece);
+        change_turn();
+    }
+
     public List<Field> valid_moves(Piece piece){
 
         int row = piece.get_row();
@@ -164,14 +186,14 @@ public class Board {
 
         }
 
-        if(valid_moves_list.size() == 0){
-            System.out.print("No valid moves");
+        /*if(valid_moves_list.size() == 0){
+            System.out.println("No valid moves!");
         }
         else{
             for(int i = 0; i < valid_moves_list.size(); i++){
-                System.out.println("Valid move in row: " + valid_moves_list.get(i).get_row() + " and col: " + valid_moves_list.get(i).get_col());
+                //System.out.println("Valid move in row: " + valid_moves_list.get(i).get_row() + " and col: " + valid_moves_list.get(i).get_col());
             }
-        }
+        }*/
 
         return valid_moves_list;
     }
@@ -190,7 +212,7 @@ public class Board {
         if (is_king == false) {
             if (color.equals("blue")) {
 
-                if ((row - 1 >= 1) && (col + 1 <= 8) && (row - 2 >= 1) && (col + 2 <= 8) && !(fields[row - 2][col + 2].get_is_taken()) && fields[row - 1][col + 1].get_is_taken()) {
+                if ((row - 1 >= 1) && (row - 2 >= 1) && (col + 1 <= 8) && (col + 2 <= 8) && !(fields[row - 2][col + 2].get_is_taken()) && fields[row - 1][col + 1].get_is_taken()) {
                     for (int i = 0; i < red_pieces_list.size(); i++) {
                         if (fields[row - 1][col + 1].get_row() == red_pieces_list.get(i).get_row() && fields[row - 1][col + 1].get_col() == red_pieces_list.get(i).get_col()) {
                             valid_attacks_list.add(fields[row - 2][col + 2]);
@@ -200,9 +222,9 @@ public class Board {
                     }
                 }
 
-                if ((row - 1 >= 1) && (col - 1 >= 1) && (row - 2 >= 1) && (col - 2 >= 1) && !(fields[row - 2][col - 2].get_is_taken()) && fields[row - 1][col - 1].get_is_taken()) {
+                if ((row - 1 >= 1) && (row - 2 >= 1) && (col - 1 >= 1) && (col - 2 >= 1) && !(fields[row - 2][col - 2].get_is_taken()) && fields[row - 1][col - 1].get_is_taken()) {
                     for (int i = 0; i < red_pieces_list.size(); i++) {
-                        if (fields[row - 1][col + 1].get_row() == red_pieces_list.get(i).get_row() && fields[row - 1][col + 1].get_col() == red_pieces_list.get(i).get_col()) {
+                        if (fields[row - 1][col - 1].get_row() == red_pieces_list.get(i).get_row() && fields[row - 1][col - 1].get_col() == red_pieces_list.get(i).get_col()) {
                             valid_attacks_list.add(fields[row - 2][col - 2]);
                             coordinates_to_remove.add(row - 1);
                             coordinates_to_remove.add(col - 1);
@@ -212,7 +234,7 @@ public class Board {
 
             } else {
 
-                if ((row + 1 <= 8) && (col + 1 <= 8) && (row + 2 <= 8) && (col + 2 <= 8) && !(fields[row + 2][col + 2].get_is_taken()) && fields[row + 1][col + 1].get_is_taken()) {
+                if ((row + 1 <= 8) && (row + 2 <= 8) && (col + 1 <= 8) && (col + 2 <= 8) && !(fields[row + 2][col + 2].get_is_taken()) && fields[row + 1][col + 1].get_is_taken()) {
                     for (int i = 0; i < blue_pieces_list.size(); i++) {
                         if (fields[row + 1][col + 1].get_row() == blue_pieces_list.get(i).get_row() && fields[row + 1][col + 1].get_col() == blue_pieces_list.get(i).get_col()) {
                             valid_attacks_list.add(fields[row + 2][col + 2]);
@@ -222,7 +244,7 @@ public class Board {
                     }
                 }
 
-                if ((row + 1 <= 8) && (col - 1 >= 1) && (row + 2 <= 8) && (col - 2 >= 1) && !(fields[row + 2][col - 2].get_is_taken()) && fields[row + 1][col - 1].get_is_taken()) {
+                if ((row + 1 <= 8) && (row + 2 <= 8) && (col - 1 >= 1) && (col - 2 >= 1) && !(fields[row + 2][col - 2].get_is_taken()) && fields[row + 1][col - 1].get_is_taken()) {
                     for (int i = 0; i < blue_pieces_list.size(); i++) {
                         if (fields[row + 1][col - 1].get_row() == blue_pieces_list.get(i).get_row() && fields[row + 1][col - 1].get_col() == blue_pieces_list.get(i).get_col()) {
                             valid_attacks_list.add(fields[row + 2][col - 2]);
@@ -242,11 +264,27 @@ public class Board {
                         coordinates_to_remove.add(col + 1);
                     }
                 }
+
+                for (int i = 0; i < blue_pieces_list.size(); i++) {
+                    if (fields[row - 1][col + 1].get_row() == blue_pieces_list.get(i).get_row() && fields[row - 1][col + 1].get_col() == blue_pieces_list.get(i).get_col()) {
+                        valid_attacks_list.add(fields[row - 2][col + 2]);
+                        coordinates_to_remove.add(row - 1);
+                        coordinates_to_remove.add(col + 1);
+                    }
+                }
             }
 
             if ((row - 1 >= 1) && (col - 1 >= 1) && (row - 2 >= 1) && (col - 2 >= 1) && !(fields[row - 2][col - 2].get_is_taken()) && fields[row - 1][col - 1].get_is_taken()) {
                 for (int i = 0; i < red_pieces_list.size(); i++) {
-                    if (fields[row - 1][col + 1].get_row() == red_pieces_list.get(i).get_row() && fields[row - 1][col + 1].get_col() == red_pieces_list.get(i).get_col()) {
+                    if (fields[row - 1][col - 1].get_row() == red_pieces_list.get(i).get_row() && fields[row - 1][col - 1].get_col() == red_pieces_list.get(i).get_col()) {
+                        valid_attacks_list.add(fields[row - 2][col - 2]);
+                        coordinates_to_remove.add(row - 1);
+                        coordinates_to_remove.add(col - 1);
+                    }
+                }
+
+                for (int i = 0; i < blue_pieces_list.size(); i++) {
+                    if (fields[row - 1][col - 1].get_row() == blue_pieces_list.get(i).get_row() && fields[row - 1][col - 1].get_col() == blue_pieces_list.get(i).get_col()) {
                         valid_attacks_list.add(fields[row - 2][col - 2]);
                         coordinates_to_remove.add(row - 1);
                         coordinates_to_remove.add(col - 1);
@@ -255,6 +293,14 @@ public class Board {
             }
 
             if ((row + 1 <= 8) && (col + 1 <= 8) && (row + 2 <= 8) && (col + 2 <= 8) && !(fields[row + 2][col + 2].get_is_taken()) && fields[row + 1][col + 1].get_is_taken()) {
+                for (int i = 0; i < red_pieces_list.size(); i++) {
+                    if (fields[row + 1][col + 1].get_row() == red_pieces_list.get(i).get_row() && fields[row + 1][col + 1].get_col() == red_pieces_list.get(i).get_col()) {
+                        valid_attacks_list.add(fields[row + 2][col + 2]);
+                        coordinates_to_remove.add(row + 1);
+                        coordinates_to_remove.add(col + 1);
+                    }
+                }
+
                 for (int i = 0; i < blue_pieces_list.size(); i++) {
                     if (fields[row + 1][col + 1].get_row() == blue_pieces_list.get(i).get_row() && fields[row + 1][col + 1].get_col() == blue_pieces_list.get(i).get_col()) {
                         valid_attacks_list.add(fields[row + 2][col + 2]);
@@ -272,44 +318,18 @@ public class Board {
                         coordinates_to_remove.add(col - 1);
                     }
                 }
-            }
-        }
 
-        if (valid_attacks_list.size() == 0) System.out.println("No valid attacks!");
-        else {
-
-            for (int i = 0; i < valid_attacks_list.size(); i++) {
-                System.out.println("Valid attack in row: " + valid_attacks_list.get(i).get_row() + " and col: " + valid_attacks_list.get(i).get_col());
+                for (int i = 0; i < red_pieces_list.size(); i++) {
+                    if (fields[row + 1][col - 1].get_row() == red_pieces_list.get(i).get_row() && fields[row + 1][col - 1].get_col() == red_pieces_list.get(i).get_col()) {
+                        valid_attacks_list.add(fields[row + 2][col - 2]);
+                        coordinates_to_remove.add(row + 1);
+                        coordinates_to_remove.add(col - 1);
+                    }
+                }
             }
         }
 
         return valid_attacks_list;
-    }
-
-    public void change_score(){
-
-    }
-
-    public void move_piece(){
-        Piece piece;
-        List<Field> valid_moves;
-        List<Field> valid_attacks;
-
-        do {
-
-            piece = select_piece();
-            valid_moves = valid_moves(piece);
-            valid_attacks = valid_attacks(piece);
-
-        } while(valid_moves.size() == 0 && valid_attacks.size() == 0);
-
-        Field choosed = select_field(valid_moves, valid_attacks);
-
-        if(move_or_attack.equals("move")) execute_move(piece, choosed);
-        else if(move_or_attack.equals("attack")) execute_attack(piece, choosed);
-
-        transform_to_king(piece);
-        change_turn();
     }
 
     public void execute_move(Piece piece, Field choose){
@@ -373,7 +393,7 @@ public class Board {
                         move_or_attack("move");
                         return valid_moves.get(i);
                     } else {
-                        System.out.println("This move can't be execute, choose another field!\n");
+                        System.out.println(ConsoleColors.RED + "This move can't be execute, choose another field!\n" + ConsoleColors.RESET);
                     }
                 }
             }
@@ -407,7 +427,7 @@ public class Board {
 
                     for (int i = 0; i < red_pieces_list.size(); i++) {
                         if (red_pieces_list.get(i).get_row() == position_of_piece.get(0) && red_pieces_list.get(i).get_col() == position_of_piece.get(1)){
-                            System.out.println("You have choosen piece of your opponent!");
+                            System.out.println(ConsoleColors.RED + "You have choosen piece of your opponent!" + ConsoleColors.RESET);
                             break;
                         }
                     }
@@ -423,7 +443,7 @@ public class Board {
 
                     for (int i = 0; i < blue_pieces_list.size(); i++) {
                         if (blue_pieces_list.get(i).get_row() == position_of_piece.get(0) && blue_pieces_list.get(i).get_col() == position_of_piece.get(1)){
-                            System.out.println("You have choosen piece of your opponent!");
+                            System.out.println(ConsoleColors.RED + "You have choosen piece of your opponent!" + ConsoleColors.RESET);
                             break;
                         }
                     }
@@ -438,21 +458,21 @@ public class Board {
             }
         }
 
-        System.out.println("Your cords are: " + cords.charAt(0) + ", " + cords.charAt(1));
+        //System.out.println("Your cords are: " + cords.charAt(0) + ", " + cords.charAt(1));
 
-        System.out.println("Your cords are: " + position_of_piece.get(0) + ", " + position_of_piece.get(1));
+        //System.out.println("Your cords are: " + position_of_piece.get(0) + ", " + position_of_piece.get(1));
 
         if(who.equals("blue")){
             for(int i = 0; i < blue_pieces_list.size(); i++){
                 if(blue_pieces_list.get(i).get_row() == position_of_piece.get(0) && blue_pieces_list.get(i).get_col() == position_of_piece.get(1)){
-                    System.out.println("Piece: row: " + blue_pieces_list.get(i).get_row() + ", col: " + blue_pieces_list.get(i).get_col() + ", color: " + blue_pieces_list.get(i).get_color());
+                    //System.out.println("Piece: row: " + blue_pieces_list.get(i).get_row() + ", col: " + blue_pieces_list.get(i).get_col() + ", color: " + blue_pieces_list.get(i).get_color());
                     return blue_pieces_list.get(i);
                 }
             }
         } else if(who.equals("red")){
             for(int i = 0; i < red_pieces_list.size(); i++){
                 if(red_pieces_list.get(i).get_row() == position_of_piece.get(0) && red_pieces_list.get(i).get_col() == position_of_piece.get(1)){
-                    System.out.println("Piece: row: " + red_pieces_list.get(i).get_row() + ", col: " + red_pieces_list.get(i).get_col() + ", color: " + red_pieces_list.get(i).get_color());
+                    //System.out.println("Piece: row: " + red_pieces_list.get(i).get_row() + ", col: " + red_pieces_list.get(i).get_col() + ", color: " + red_pieces_list.get(i).get_color());
                     return red_pieces_list.get(i);
                 }
             }
@@ -519,7 +539,7 @@ public class Board {
                 row = 8;
                 break;
             default:
-                System.out.println("Something goes wrong!");
+                System.out.println(ConsoleColors.RED + "Something goes wrong!" + ConsoleColors.RESET);
                 row = -1;
         }
 

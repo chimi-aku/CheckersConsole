@@ -9,7 +9,7 @@ public class Piece {
         this.row = row;
         this.col = col;
 
-        this.is_king = true;
+        this.is_king = false;
     }
 
 
