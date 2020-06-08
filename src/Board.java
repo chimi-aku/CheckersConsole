@@ -28,8 +28,8 @@ public class Board {
         turn = 1;
         board = new String[9][9];
         fields = new Field[9][9];
-        //this.white_units = 12;
-        //this.black_units = 12;
+        this.red_units = 12;
+        this.blue_units = 12;
     }
 
     public void display_board() {
@@ -154,32 +154,77 @@ public class Board {
         return valid_moves_list;
     }
 
-    /*public void move_piece() {
+    public List<Field> valid_attacks(Piece piece) {
 
-        check_move();
+        int row = piece.get_row();
+        int col = piece.get_col();
+        String color = piece.get_color();
+        boolean is_king = piece.is_king();
 
-        //if (fields[piece.get_row()][piece.get_col()].get_is_taken()) { // Wywala błąd tablicy fields przy używaniu pustego pola
+        List<Field> valid_attacks_list = new LinkedList<Field>();
 
-            //List<Field> valid_moves = valid_moves(piece);
-            //List<Integer> new_position = select_position(1, 2);
+        if (is_king == false) {
+            if (color.equals("blue")) {
 
-            //while (select_position().get(0) != valid_moves)
+                if ((row - 1 >= 1) && (col + 1 <= 8) && (row - 2 >= 1) && (col + 2 <= 8) && !(fields[row - 2][col + 2].get_is_taken()) && fields[row - 1][col + 1].get_is_taken()) {
+                    for (int i = 0; i < red_pieces_list.size(); i++) {
+                        if (fields[row - 1][col + 1].get_row() == red_pieces_list.get(i).get_row() && fields[row - 1][col + 1].get_col() == red_pieces_list.get(i).get_col()) {
+                            valid_attacks_list.add(fields[row - 2][col + 2]);
+                        }
+                    }
+                }
 
-        //} else {
-            //System.out.print("Piece doesn't exist on this field");
-            //return;
-        //}
+                if ((row - 1 >= 1) && (col - 1 >= 1) && (row - 2 >= 1) && (col - 2 >= 1) && !(fields[row - 2][col - 2].get_is_taken()) && fields[row - 1][col - 1].get_is_taken()) {
+                    for (int i = 0; i < red_pieces_list.size(); i++) {
+                        if (fields[row - 1][col + 1].get_row() == red_pieces_list.get(i).get_row() && fields[row - 1][col + 1].get_col() == red_pieces_list.get(i).get_col()) {
+                            valid_attacks_list.add(fields[row - 2][col - 2]);
+                        }
+                    }
+                }
 
-    }*/
+            } else {
+
+                if ((row + 1 <= 8) && (col + 1 <= 8) && (row + 2 <= 8) && (col + 2 <= 8) && !(fields[row + 2][col + 2].get_is_taken()) && fields[row + 1][col + 1].get_is_taken()) {
+                    for (int i = 0; i < blue_pieces_list.size(); i++) {
+                        if (fields[row + 1][col + 1].get_row() == blue_pieces_list.get(i).get_row() && fields[row + 1][col + 1].get_col() == blue_pieces_list.get(i).get_col()) {
+                            valid_attacks_list.add(fields[row + 2][col + 2]);
+                        }
+                    }
+                }
+
+                if ((row + 1 <= 8) && (col - 1 >= 1) && (row + 2 <= 8) && (col - 2 >= 1) && !(fields[row + 2][col - 2].get_is_taken()) && fields[row + 1][col - 1].get_is_taken()) {
+                    for (int i = 0; i < blue_pieces_list.size(); i++) {
+                        if (fields[row + 1][col - 1].get_row() == blue_pieces_list.get(i).get_row() && fields[row + 1][col - 1].get_col() == blue_pieces_list.get(i).get_col()) {
+                            valid_attacks_list.add(fields[row + 2][col - 2]);
+                        }
+                    }
+                }
+            }
+
+            if (valid_attacks_list.size() == 0) System.out.println("No valid attacks!");
+            else {
+
+                for (int i = 0; i < valid_attacks_list.size(); i++) {
+                    System.out.println("Valid attack in row: " + valid_attacks_list.get(i).get_row() + " and col: " + valid_attacks_list.get(i).get_col());
+                }
+            }
+        }
+
+        return valid_attacks_list;
+    }
+
+    public void change_score(){
+
+    }
 
     public void move_piece(){
         Piece piece = select_piece();
         List<Field> valid_moves = valid_moves(piece);
-        //List<Field> valid_attacks = valid_attacks(piece);
-        Field choosed = select_field(valid_moves);
+        List<Field> valid_attacks = valid_attacks(piece);
+        Field choosed = select_field(valid_moves, valid_attacks);
 
         if(move_or_attack.equals("move")) execute_move(piece, choosed);
-        //else execute_attack(piece, choosed);
+        else if(move_or_attack.equals("attack")) execute_attack(piece, choosed);
     }
 
     public void execute_move(Piece piece, Field choose){
@@ -189,7 +234,15 @@ public class Board {
         choose.set_is_taken(true);
     }
 
-    public Field select_field(List<Field> valid_moves){
+    public void execute_attack(Piece piece, Field choose){
+        //fields[choose.get_row()][piece.get_col()].set_is_taken(false);
+        fields[piece.get_row()][piece.get_col()].set_is_taken(false);
+        piece.set_row(choose.get_row());
+        piece.set_col(choose.get_col());
+        choose.set_is_taken(true);
+    }
+
+    public Field select_field(List<Field> valid_moves, List<Field> valid_attacks){
         Scanner scan = new Scanner(System.in);
         String cords = " ";
         boolean valid = true;
@@ -208,6 +261,15 @@ public class Board {
                     if(valid_moves.get(i).get_row() == position_of_field.get(0) && valid_moves.get(i).get_col() == position_of_field.get(1)){
                         move_or_attack("move");
                         return valid_moves.get(i);
+                    }
+                }
+
+                for(int i = 0; i < valid_attacks.size(); i++){
+                    if(valid_attacks.get(i).get_row() == position_of_field.get(0) && valid_attacks.get(i).get_col() == position_of_field.get(1)){
+                        move_or_attack("attack");
+                        return valid_attacks.get(i);
+                    } else {
+                        System.out.println("This move can't be execute, choose another field!\n");
                     }
                 }
             }
@@ -233,29 +295,39 @@ public class Board {
             position_of_piece = convertCords(cords);
 
             if(pattern.matcher(cords).matches()){
+
+                if(!(fields[position_of_piece.get(0)][position_of_piece.get(1)].get_is_taken())){
+                    System.out.println("There is no piece on this field!");
+                }
+
                 if(who.equals("blue")) {
+
+                    for (int i = 0; i < red_pieces_list.size(); i++) {
+                        if (red_pieces_list.get(i).get_row() == position_of_piece.get(0) && red_pieces_list.get(i).get_col() == position_of_piece.get(1)){
+                            System.out.println("You have choosen piece of your opponent!");
+                            break;
+                        }
+                    }
+
                     for (int i = 0; i < blue_pieces_list.size(); i++) {
                         if (blue_pieces_list.get(i).get_row() == position_of_piece.get(0) && blue_pieces_list.get(i).get_col() == position_of_piece.get(1)){
                             valid = false;
                             break;
-                        } else if(fields[position_of_piece.get(0)][position_of_piece.get(1)].get_is_taken()) {
+                        }
+                    }
+
+                } else if(who.equals("red")){
+
+                    for (int i = 0; i < blue_pieces_list.size(); i++) {
+                        if (blue_pieces_list.get(i).get_row() == position_of_piece.get(0) && blue_pieces_list.get(i).get_col() == position_of_piece.get(1)){
                             System.out.println("You have choosen piece of your opponent!");
-                            break;
-                        } else {
-                            System.out.println("There is no piece on this field!");
                             break;
                         }
                     }
-                } else if(who.equals("red")){
-                    for(int i = 0; i < red_pieces_list.size(); i++){
-                        if(red_pieces_list.get(i).get_row() == position_of_piece.get(0) && red_pieces_list.get(i).get_col() == position_of_piece.get(1)){
+
+                    for (int i = 0; i < red_pieces_list.size(); i++) {
+                        if (red_pieces_list.get(i).get_row() == position_of_piece.get(0) && red_pieces_list.get(i).get_col() == position_of_piece.get(1)){
                             valid = false;
-                            break;
-                        } else if(fields[position_of_piece.get(0)][position_of_piece.get(1)].get_is_taken()) {
-                            System.out.println("You have choosen piece of your opponent!");
-                            break;
-                        } else {
-                            System.out.println("There is no piece on this field!");
                             break;
                         }
                     }
@@ -286,21 +358,13 @@ public class Board {
         return new Piece("transparent", -1, -1);
     }
 
-    /*public Piece get_piece(int row, int col, List<Integer> integers){
-
-        for( int i = 0; i < pieces_list.size(); i++){
-            if(pieces_list.get(i).get_row() == row && pieces_list.get(i).get_col() == col)
-                return pieces_list.get(i);
-        }
-
-        return new Piece("wrong_cords", -1, -1);
-    } */
-
     public String whose_move(){
         String who;
 
         if(turn % 2 != 0) who = "blue";
         else who = "red";
+
+        System.out.println("\nNow is " + who + " turn!\n");
 
         turn++;
 
@@ -364,5 +428,13 @@ public class Board {
         coordinates.add(col);
 
         return coordinates;
+    }
+
+    public int get_number_of_blue_units() {
+        return blue_units;
+    }
+
+    public int get_number_of_red_units() {
+        return red_units;
     }
 }
