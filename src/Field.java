@@ -24,7 +24,6 @@ public class Field {
         return is_taken;
     }
 
-
     public void set_is_taken(boolean is_taken) {
         this.is_taken = is_taken;
     }
