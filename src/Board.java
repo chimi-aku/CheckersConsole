@@ -23,7 +23,7 @@ public class Board {
     public List<Piece> get_red_pieces_list(){ return red_pieces_list; }
     public List<Piece> get_blue_pieces_list(){ return red_pieces_list; }
 
-    Board() {
+    Board() { // <- this method is a constructor of Board class
         who = "blue";
         move_or_attack = "move";
         turn = 1;
@@ -33,7 +33,7 @@ public class Board {
         this.blue_units = 12;
     }
 
-    public void display_board() {
+    public void display_board() { // <- this method displays board in console
 
         board[0][0] = "X ";
         board[0][1] = "1 ";
@@ -86,7 +86,7 @@ public class Board {
         }
     }
 
-    public void setup_board() {
+    public void setup_board() { // <- this method prepare board to start a game
 
         // Make a list of pieces and fields
 
@@ -120,7 +120,7 @@ public class Board {
             }*/
     }
 
-    public void move_piece(){
+    public void move_piece(){ // <- this method is responsible for moving pieces
         Piece piece;
         List<Field> valid_moves;
         List<Field> valid_attacks;
@@ -142,7 +142,7 @@ public class Board {
         change_turn();
     }
 
-    public List<Field> valid_moves(Piece piece){
+    public List<Field> valid_moves(Piece piece){ // <- this method checks if piece which is given in arguments has possible moves
 
         int row = piece.get_row();
         int col = piece.get_col();
@@ -196,7 +196,7 @@ public class Board {
         return valid_moves_list;
     }
 
-    public List<Field> valid_attacks(Piece piece) {
+    public List<Field> valid_attacks(Piece piece) { // <- this method checks if piece which is given in arguments has possible attacks
 
         coordinates_to_remove.clear();
 
@@ -330,14 +330,14 @@ public class Board {
         return valid_attacks_list;
     }
 
-    public void execute_move(Piece piece, Field choose){
+    public void execute_move(Piece piece, Field choose){ // <- this method executes move if it is possible
         fields[piece.get_row()][piece.get_col()].set_is_taken(false);
         piece.set_row(choose.get_row());
         piece.set_col(choose.get_col());
         choose.set_is_taken(true);
     }
 
-    public void execute_attack(Piece piece, Field choose){
+    public void execute_attack(Piece piece, Field choose){ // <- this method executes attack if it is possible
         fields[coordinates_to_remove.get(0)][coordinates_to_remove.get(1)].set_is_taken(false);
 
         if(who == "blue") {
@@ -362,7 +362,7 @@ public class Board {
         choose.set_is_taken(true);
     }
 
-    public Field select_field(List<Field> valid_moves, List<Field> valid_attacks){
+    public Field select_field(List<Field> valid_moves, List<Field> valid_attacks){ // <- this method is responsible for selecting fields
         Scanner scan = new Scanner(System.in);
         String cords = " ";
         boolean valid = true;
@@ -398,7 +398,7 @@ public class Board {
         return new Field(-1, -1, false);
     }
 
-    public Piece select_piece() {
+    public Piece select_piece() { // <- this method is responsible for selecting pieces
         String who = whose_move();
         List<Integer> position_of_piece = new LinkedList<Integer>();
         Scanner scan = new Scanner(System.in);
@@ -478,7 +478,7 @@ public class Board {
         return new Piece("transparent", -1, -1);
     }
 
-    public String whose_move(){
+    public String whose_move(){ // <- this method is responsible for returning whose move is now
 
         if(turn % 2 != 0) who = "blue";
         else who = "red";
@@ -488,15 +488,15 @@ public class Board {
         return who;
     }
 
-    public void change_turn(){ turn++; }
+    public void change_turn(){ turn++; } // <- this method is responsible for counting turns
 
-    public void move_or_attack(String choose){
+    public void move_or_attack(String choose){ // <- this method decides what to do, move or attack
 
         if(choose.equals("move")) move_or_attack = "move";
         else move_or_attack = "attack";
     }
 
-    public List<Integer> convertCords(String cords){
+    public List<Integer> convertCords(String cords){ // <- this method converts cords on numbers
 
         List<Integer> coordinates = new LinkedList<Integer>();
 
@@ -549,16 +549,16 @@ public class Board {
         return coordinates;
     }
 
-    public void transform_to_king(Piece piece){
+    public void transform_to_king(Piece piece){ // <- this method is transforming normal piece to king piece which has diffrent possible moves
         if(piece.get_color() == "blue" && piece.get_row() == 1) piece.set_is_king(true);
         else if(piece.get_color() == "red" && piece.get_row() == 8) piece.set_is_king(true);
     }
 
-    public int get_number_of_blue_units() {
+    public int get_number_of_blue_units() { // <- this method is a getter of blue units value
         return blue_units;
     }
 
     public int get_number_of_red_units() {
         return red_units;
-    }
+    } // <- this method is a getter of red units value
 }

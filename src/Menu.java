@@ -4,7 +4,7 @@ import static java.lang.System.exit;
 
 public class Menu {
 
-    public void display_menu(){
+    public void display_menu(){ // <- this method displays menu in console
 
         Scanner scan = new Scanner(System.in);
 
@@ -44,13 +44,13 @@ public class Menu {
         }
     }
 
-    public void credits(){
+    public void credits(){ //<- this method displays who created a game in console
         System.out.println("\nAuthors: ");
         System.out.println("Marcin \"The Real Slim Stefan\" Stefanowicz");
         System.out.println("Łukasz \"Chimi Aku Aku\" Terpiłowsky\n");
     }
 
-    public void classic_checkers(){
+    public void classic_checkers(){ // <- this method starts classic checkers game mode
         Board board = new Board();
         board.setup_board();
 
@@ -62,7 +62,7 @@ public class Menu {
         board.display_board();
     }
 
-    public void first_blood(){
+    public void first_blood(){ // <- this method starts first blood game mode
         Board board = new Board();
         board.setup_board();
 
@@ -84,7 +84,7 @@ public class Menu {
         board.display_board();
     }
 
-    public void fifty_fifty(){
+    public void fifty_fifty(){ // <- this method starts fifty fifty game mode
         Board board = new Board();
         board.setup_board();
 
